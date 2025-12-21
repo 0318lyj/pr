@@ -1,10 +1,14 @@
 package com.board.pr.web;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.board.pr.domain.board.BoardRepository;
 import com.board.pr.service.BoardService;
+import com.board.pr.web.dto.BoardListResponseDto;
 import com.board.pr.web.dto.BoardSaveRequestDto;
 
 import lombok.RequiredArgsConstructor;
@@ -23,5 +27,14 @@ public class BoardApiController {
     public Long save(@RequestBody BoardSaveRequestDto requestDto){
         //컨트롤러는 요청을 받아 서비스에 처리를 넘기고, 그 걸과를 다시 반환
         return boardService.save(requestDto);
+    }
+
+    /**
+     * GET 방식으로 /api/v1/posts/list 요청이 오면 전체 게시글 목록을 반환
+     */
+    @GetMapping("/api/v1/posts/list")
+    public List<BoardListResponseDto> findAll(){
+        //서비스에서 최신순으로 정렬된 DTO 리스트를 받아와서 클라이어트에게 던진다.
+        return boardService.findAllDesc();
     }
 }
