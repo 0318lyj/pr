@@ -6,9 +6,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.board.pr.domain.board.Board;
 import com.board.pr.domain.board.BoardRepository;
 import com.board.pr.web.dto.BoardListResponseDto;
+import com.board.pr.web.dto.BoardResponseDto;
 import com.board.pr.web.dto.BoardSaveRequestDto;
+import com.board.pr.web.dto.BoardUpdateRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,5 +37,29 @@ public class BoardService {
         return boardRepository.findAllDesc().stream()
                 .map(BoardListResponseDto::new) //결과로 넘어온 Board 엔티티들을 DTO로 변환
                 .collect(Collectors.toList()); //변환된 DTO들을 리스트로 묶어서 반환
+    }
+
+    @Transactional(readOnly = true)
+    public BoardResponseDto findById(Long id){
+        Board entity = boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당게시글이 없습니다. id = " + id));
+        return new BoardResponseDto(entity);
+    }
+
+    @Transactional
+    public Long update(Long id, BoardUpdateRequestDto requestDto){
+        Board board = boardRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+        board.update(requestDto.getTitle(), requestDto.getContent());
+
+        return id;
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Board board = boardRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+
+        //엔티티 자체를 넘겨서 삭제하거나, id로 삭제할 수 있다.
+        boardRepository.delete(board);
     }
 }
