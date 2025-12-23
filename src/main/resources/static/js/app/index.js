@@ -10,6 +10,13 @@ var main = {
         $('#btn-save').on('click', function () {
             _this.save();
         });
+
+        $('#btn-update').on('click', function () {
+            _this.update();
+        });
+        $('#btn-delete').on('click', function () {
+            _this.delete();
+        });
     },
     save : function () {
         //화면에서 사용자가 입력한 값들을 가져와서 데이터 객체로 만든다.
@@ -32,6 +39,42 @@ var main = {
             window.location.href = '/'; //등록 성공 후 메인 화면으로 이동
         }).fail(function (error){
             //통신이 실패했을 때 실행되는 로직
+            alert(JSON.stringify(error));
+        });
+    },
+    update : function () {
+        var data = {
+            title: $('#title').val(),
+            content:$('#content').val()
+        };
+
+        var id = $('#id').val();
+
+        $.ajax({
+            type:'PUT', //수정은 PUT
+            url: '/api/v1/posts/' +id,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data)
+        }).done(function(){
+            alert('글이 수정되었습니다.');
+            window.location.href = '/';
+        }).fail(function (error) {
+            alert(JSON.stringify(error));
+        })
+    },
+    delete : function () {
+        var id = $('#id').val();
+
+        $.ajax({
+            type: 'DELETE', //삭제는 DELETE
+            url: '/api/v1/posts/' + id,
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8'
+        }).done(function(){
+            alert('글이 삭제되었습니다.');
+            window.location.href = '/';
+        }).fail(function (error){
             alert(JSON.stringify(error));
         });
     }

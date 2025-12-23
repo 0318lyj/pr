@@ -24,7 +24,9 @@
             <tbody id="tbody">
                 <tr th:each="post : ${posts}">
                     <td th:text="${post.id}"></td>
-                    <td th:text="${post.title}"></td>
+                    <td>
+                        <a th:href="@{'/posts/update/' + ${post.id}}" th:text="${post.title}"></a>
+                    </td>
                     <td th:text="${post.author}"></td>
                     <td th:text="${#temporals.format(post.modifiedDate, 'yyyy-MM-dd HH:mm')}"></td>
                 </tr>

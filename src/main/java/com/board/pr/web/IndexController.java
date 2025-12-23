@@ -3,8 +3,10 @@ package com.board.pr.web;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.board.pr.service.BoardService;
+import com.board.pr.web.dto.BoardResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,5 +35,15 @@ public class IndexController {
     @GetMapping("/posts/save")
     public String postSave(){
         return "posts-save";
+    }
+
+    /**
+     * 글 상세조회
+     */
+    @GetMapping("/posts/update/{id}")
+    public String postsUpdate(@PathVariable("id") Long id, Model model){
+        BoardResponseDto dto = boardService.findById(id);
+        model.addAttribute("post", dto);
+        return "posts-update";
     }
 }

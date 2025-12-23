@@ -2,17 +2,18 @@ package com.board.pr.web;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.board.pr.domain.board.BoardRepository;
 import com.board.pr.service.BoardService;
 import com.board.pr.web.dto.BoardListResponseDto;
 import com.board.pr.web.dto.BoardResponseDto;
 import com.board.pr.web.dto.BoardSaveRequestDto;
+import com.board.pr.web.dto.BoardUpdateRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,18 +46,25 @@ public class BoardApiController {
      * 상세조회
      */
     @GetMapping("api/v1/posts//{id}")
-    public BoardResponseDto findById(@PathVariable Long id){
+    public BoardResponseDto findById(@PathVariable("id") Long id){
         return boardService.findById(id);
     }
 
     /**
      * 수정
      */
-    // @PutMapping("/api/v1/posts/{id}")
-    // public Long update(@PathVariable)
+    @PutMapping("/api/v1/posts/{id}")
+    public Long update(@PathVariable("id") Long id, @RequestBody BoardUpdateRequestDto requestDto){
+        return boardService.update(id, requestDto);
+    }
 
 
     /**
      * 삭제
      */
+    @DeleteMapping("/api/v1/posts/{id}")
+    public Long delete(@PathVariable("id") Long id){
+        boardService.delete(id);
+        return id;
+    }
 }
