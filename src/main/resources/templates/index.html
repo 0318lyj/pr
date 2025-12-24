@@ -11,6 +11,18 @@
         <div class="mb-3">
             <a href="/posts/save" role="button" class="btn btn-primary">글 등록</a>
         </div>
+        <div class="mb-3">
+        <div th:hide="${#authorization.expression('isAuthenticated()')}">
+            <a href="/login" class="btn btn-secondary">로그인</a>
+            <a href="/user/signup" class="btn btn-primary">회원가입</a>
+        </div>
+        
+        <div th:if="${#authorization.expression('isAuthenticated()')}">
+            <span class="mr-2">반갑습니다, <b sec:authentication="name">사용자</b>님!</span>
+            <a href="/posts/save" class="btn btn-primary">글 등록</a>
+            <a href="/logout" class="btn btn-danger">로그아웃</a>
+        </div>
+    </div>
 
         <table class="table table-horizontal table-bordered">
             <thead class="thead-strong">

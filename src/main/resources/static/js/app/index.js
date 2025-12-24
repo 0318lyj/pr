@@ -17,6 +17,9 @@ var main = {
         $('#btn-delete').on('click', function () {
             _this.delete();
         });
+        $('#btn-user-save').on('click', function () {
+            _this.userSave();
+        });
     },
     save : function () {
         //화면에서 사용자가 입력한 값들을 가져와서 데이터 객체로 만든다.
@@ -74,6 +77,26 @@ var main = {
         }).done(function(){
             alert('글이 삭제되었습니다.');
             window.location.href = '/';
+        }).fail(function (error){
+            alert(JSON.stringify(error));
+        });
+    },
+    userSave : function (){
+        var data = {
+            email: $('#email').val(),
+            password: $('#password').val(),
+            role: $('#role').val()
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/user',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data)
+        }).done(function(){
+            alert('회원가입이 완료되었습니다.');
+            window.location.href = '/login'; //가입 후 로그인 페이지로 이동
         }).fail(function (error){
             alert(JSON.stringify(error));
         });

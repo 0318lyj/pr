@@ -46,4 +46,21 @@ public class IndexController {
         model.addAttribute("post", dto);
         return "posts-update";
     }
+
+    /**
+     * 회원가입 페이지 이동
+     */
+    @GetMapping("/user/signup")
+    public String useSignup(){
+        // templates/user-signup.html 파일을 찾아서 반환
+        return "user-signup";
+    }
+
+    /**
+     * 로그인 페이지 이동
+     */
+    @GetMapping("/login")
+    public String login() {
+        return "login"; // templates/login.html을 반환
+    }
 }
