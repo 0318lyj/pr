@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.board.pr.domain.board.Board;
 import com.board.pr.domain.board.BoardRepository;
+import com.board.pr.domain.user.User;
+import com.board.pr.domain.user.UserRepository;
 import com.board.pr.web.dto.BoardListResponseDto;
 import com.board.pr.web.dto.BoardResponseDto;
 import com.board.pr.web.dto.BoardSaveRequestDto;
@@ -21,11 +23,16 @@ public class BoardService {
     
     // @RequiredArgsConstructor 때문에 @Autowired 안해도 됨
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository; //사용자 정보를 찾기 위해 주입
 
     @Transactional
-    public Long save(BoardSaveRequestDto requestDto){
+    public Long save(BoardSaveRequestDto requestDto, String email){
         // 리포지토리를 통해 엔티티를 DB에 저장하고, 생성된 ID 반환
-        return boardRepository.save(requestDto.toEntity()).getId();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. email=" + email));
+
+        // DTO를 엔티티로 변환할 때 조회한 User 객체를 전달하여 연관관계를 맺습니다.
+        return boardRepository.save(requestDto.toEntity(user)).getId();
     }
 
     /**
@@ -46,20 +53,46 @@ public class BoardService {
     }
 
     @Transactional
-    public Long update(Long id, BoardUpdateRequestDto requestDto){
+    public Long update(Long id, BoardUpdateRequestDto requestDto, String currentEmail){
         Board board = boardRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+        if (!board.getUser().getEmail().equals(currentEmail)){
+            throw new IllegalArgumentException("본인의 글만 수정할 수 있습니다.");
+        }
+        
         board.update(requestDto.getTitle(), requestDto.getContent());
-
         return id;
     }
 
-    @Transactional
-    public void delete(Long id) {
-        Board board = boardRepository.findById(id)
-                    .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+    // @Transactional
+    // public Long save(BoardSaveRequestDto requestDto, String email){
+    //     //1. 세션에서 넘어온 이메일을 이용해 DB에서 사용자 엔티티를 찾는다.
+    //     User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. email = " + email));
+        
+    //     //2. DTO를 엔티티로 변환할 때 찾은 사용자(User) 정보를 함께 전달합니다.
+    //     // (Board 엔티티의 빌더에 user가 추가되어 있어야 합니다.)
+    //     return boardRepository.save(requestDto.toEntity(user)).getId();
+    // }
 
-        //엔티티 자체를 넘겨서 삭제하거나, id로 삭제할 수 있다.
+    @Transactional
+    public void delete(Long id, String email) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다. id=" + id));
+    
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    
+        /**
+         * [강력한 권한 검증]
+         * 본인이 작성한 글이거나, 현재 사용자의 권한이 ADMIN인 경우에만 삭제를 허용합니다.
+         */
+        boolean isAuthor = board.getUser().getEmail().equals(email);
+        boolean isAdmin = currentUser.getRole().name().equals("ADMIN");
+    
+        if (!isAuthor && !isAdmin) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+    
         boardRepository.delete(board);
     }
 }

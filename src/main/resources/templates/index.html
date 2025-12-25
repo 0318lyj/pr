@@ -1,49 +1,63 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>스프링 부트 게시판</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .thead-strong { background-color: #f8f9fa; }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1>스프링 부트 게시판 (CRUD)</h1>
-        <div class="mb-3">
-            <a href="/posts/save" role="button" class="btn btn-primary">글 등록</a>
+        <h1>스프링 부트 게시판 (CRUD & Security)</h1>
+
+        <div sec:authorize="hasRole('ADMIN')" class="alert alert-warning mt-3">
+            <strong>관리자 모드:</strong> 모든 게시글에 대한 관리 권한이 있습니다.
+            <a href="/admin/dashboard" class="btn btn-sm btn-dark ml-2">관리자 페이지 가기</a>
         </div>
-        <div class="mb-3">
-        <div th:hide="${#authorization.expression('isAuthenticated()')}">
-            <a href="/login" class="btn btn-secondary">로그인</a>
-            <a href="/user/signup" class="btn btn-primary">회원가입</a>
-        </div>
-        
-        <div th:if="${#authorization.expression('isAuthenticated()')}">
-            <span class="mr-2">반갑습니다, <b sec:authentication="name">사용자</b>님!</span>
-            <a href="/posts/save" class="btn btn-primary">글 등록</a>
-            <a href="/logout" class="btn btn-danger">로그아웃</a>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <div sec:authorize="isAnonymous()">
+                        <a href="/login" class="btn btn-secondary" role="button">로그인</a>
+                        <a href="/user/signup" class="btn btn-primary" role="button">회원가입</a>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()">
+                        <span class="mr-3">반갑습니다, <b sec:authentication="name" class="text-primary">사용자</b>님!</span>
+                        <a href="/posts/save" class="btn btn-primary" role="button">글 등록</a>
+                        <a href="/logout" class="btn btn-danger" role="button">로그아웃</a>
+                    </div>
+                </div>
+
+                <table class="table table-horizontal table-bordered mt-4">
+                    <thead class="thead-strong">
+                        <tr>
+                            <th>번호</th>
+                            <th>제목</th>
+                            <th>작성자(이메일)</th>
+                            <th>최종수정일</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        <tr th:each="post : ${posts}">
+                            <td th:text="${post.id}"></td>
+                            <td>
+                                <a th:href="@{'/posts/update/' + ${post.id}}" th:text="${post.title}"></a>
+                            </td>
+                            <td th:text="${post.author}"></td>
+                            <td th:text="${#temporals.format(post.modifiedDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-        <table class="table table-horizontal table-bordered">
-            <thead class="thead-strong">
-                <tr>
-                    <th>게시글 번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>최종수정일</th>
-                </tr>
-            </thead>
-            <tbody id="tbody">
-                <tr th:each="post : ${posts}">
-                    <td th:text="${post.id}"></td>
-                    <td>
-                        <a th:href="@{'/posts/update/' + ${post.id}}" th:text="${post.title}"></a>
-                    </td>
-                    <td th:text="${post.author}"></td>
-                    <td th:text="${#temporals.format(post.modifiedDate, 'yyyy-MM-dd HH:mm')}"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/js/app/index.js"></script>
 </body>
 </html>

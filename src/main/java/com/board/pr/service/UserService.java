@@ -1,10 +1,14 @@
 package com.board.pr.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.board.pr.domain.user.UserRepository;
+import com.board.pr.web.dto.UserListResponseDto;
 import com.board.pr.web.dto.UserSaveRequestDto;
 
 import lombok.RequiredArgsConstructor;
@@ -24,5 +28,12 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
 
         return userRepository.save(requestDto.toEntity(encodedPassword)).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserListResponseDto> findAll(){
+        return userRepository.findAll().stream()
+                .map(UserListResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

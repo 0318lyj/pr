@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .sidebar { min-height: 100vh; background-color: #343a40; color: white; padding-top: 20px; }
+        .sidebar a { color: #adb5bd; text-decoration: none; display: block; padding: 10px 20px; }
+        .sidebar a:hover { background-color: #495057; color: white; }
+        .admin-content { padding: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 sidebar">
+                <h4 class="text-center mb-4">Admin Panel</h4>
+                <a href="/">홈으로 이동</a>
+                <a href="/admin/dashboard" class="active text-white font-weight-bold">대시보드</a>
+                <a href="#">회원 관리 (준비 중)</a>
+                <a href="#">전체 글 관리 (준비 중)</a>
+                <a href="/logout" class="text-danger mt-5">로그아웃</a>
+            </nav>
+
+            <main class="col-md-10 admin-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">시스템 대시보드</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <span class="badge badge-info p-2" sec:authentication="name">admin@test.com</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">전체 회원</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">128명</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">오늘 등록된 글</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">12건</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">최근 보안 이벤트</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small">로그인 시도 및 시스템 변경 이력이 여기에 표시됩니다.</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">2025-12-24 10:15 - [INFO] ADMIN 계정 로그인 성공</li>
+                            <li class="list-group-item">2025-12-24 09:30 - [WARN] 미인증 사용자의 관리자 페이지 접근 차단</li>
+                        </ul>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

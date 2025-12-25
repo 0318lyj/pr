@@ -1,5 +1,6 @@
 package com.board.pr.web;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,9 +29,13 @@ public class BoardApiController {
      * @RequesetBody: 클라이언트가 보낸 Json 데이터를 DTO 객체로 변환해줍니다.
      */
     @PostMapping("/api/v1/posts")
-    public Long save(@RequestBody BoardSaveRequestDto requestDto){
-        //컨트롤러는 요청을 받아 서비스에 처리를 넘기고, 그 걸과를 다시 반환
-        return boardService.save(requestDto);
+    public Long save(@RequestBody BoardSaveRequestDto requestDto, Principal principal){
+        /**
+         * Principal 객체: 현재 인증된 사용자의 정보를 담고 있다.
+         * principal.getName(): 설정에서는 사용자의 '이메일'을 반환한다.
+         * 클라이언트가 주는 데이터가 아닌, 서버가 인증한 세션 정보를 사용하므로 보안상 안전하다.
+         */
+        return boardService.save(requestDto, principal.getName());
     }
 
     /**
@@ -54,8 +59,8 @@ public class BoardApiController {
      * 수정
      */
     @PutMapping("/api/v1/posts/{id}")
-    public Long update(@PathVariable("id") Long id, @RequestBody BoardUpdateRequestDto requestDto){
-        return boardService.update(id, requestDto);
+    public Long update(@PathVariable("id") Long id, @RequestBody BoardUpdateRequestDto requestDto, Principal principal){
+        return boardService.update(id, requestDto, principal.getName());
     }
 
 
@@ -63,8 +68,8 @@ public class BoardApiController {
      * 삭제
      */
     @DeleteMapping("/api/v1/posts/{id}")
-    public Long delete(@PathVariable("id") Long id){
-        boardService.delete(id);
-        return id;
+    public Long delete(@PathVariable("id") Long id,Principal principal){
+        boardService.delete(id, principal.getName());
+    return id;
     }
 }
