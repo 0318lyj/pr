@@ -32,7 +32,8 @@ public class BoardApiController {
     public Long save(@RequestBody BoardSaveRequestDto requestDto, Principal principal){
         /**
          * Principal 객체: 현재 인증된 사용자의 정보를 담고 있다.
-         * principal.getName(): 설정에서는 사용자의 '이메일'을 반환한다.
+         * principal.getName(): 로그인한 사용자의 ID(우리 프로젝트에서는 email)를 반환한다.
+         * 사용자가 폼으로 보내는 데이터가 아닌, 서버가 보증하는 세션 정보를 서비스로 넘긴다.
          * 클라이언트가 주는 데이터가 아닌, 서버가 인증한 세션 정보를 사용하므로 보안상 안전하다.
          */
         return boardService.save(requestDto, principal.getName());

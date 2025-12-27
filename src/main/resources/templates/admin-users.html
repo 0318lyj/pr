@@ -31,11 +31,13 @@
                     </td>
                     <td th:text="${#temporals.format(user.createdDate, 'yyyy-MM-dd HH:mm')}"></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-danger">추방(준비중)</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger"th:onclick="'main.userDelete(' + ${user.id} + ')'">추방</button>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+    
+    <script src="/js/app/index.js"></script>
 </body>
 </html>

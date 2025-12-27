@@ -22,7 +22,7 @@ public class BoardSaveRequestDto {
         return Board.builder()
                 .title(title)
                 .content(content)
-                .author(author)
+                .author(user.getEmail())
                 .user(user)
                 .build();
     }

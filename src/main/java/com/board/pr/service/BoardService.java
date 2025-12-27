@@ -1,6 +1,7 @@
 package com.board.pr.service;
 
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -28,10 +29,12 @@ public class BoardService {
     @Transactional
     public Long save(BoardSaveRequestDto requestDto, String email){
         // 리포지토리를 통해 엔티티를 DB에 저장하고, 생성된 ID 반환
+        //1. 현재 로그인한 유저의 정보를 DB에서 가져온다.
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. email=" + email));
 
         // DTO를 엔티티로 변환할 때 조회한 User 객체를 전달하여 연관관계를 맺습니다.
+        //2. DTO에 조회한 유저 정보를 실어서 엔티티로 변환 후 저장
         return boardRepository.save(requestDto.toEntity(user)).getId();
     }
 
@@ -94,5 +97,12 @@ public class BoardService {
         }
     
         boardRepository.delete(board);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardListResponseDto> search(String keyword){
+        return boardRepository.findByTitleContainingOrContentContainingOrderByIdDesc(keyword, keyword).stream()
+                .map(BoardListResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

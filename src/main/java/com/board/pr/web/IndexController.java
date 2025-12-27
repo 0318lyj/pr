@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.board.pr.service.BoardService;
 import com.board.pr.web.dto.BoardResponseDto;
@@ -20,12 +21,12 @@ public class IndexController {
      * 메인페이지 (게시글 목록 화면)
      */
     @GetMapping("/")
-    public String index(Model model){
-        //1. 서비스에서 게시글 목록을 가져온다
-        //2. 모델(Model)이라는 바구니에 "posts"라는 이름으로 목록을 담는다.
-        //3. 타임리프가 이 바구니를 들고 index.html로 가서 데이터를 채운다.
-        model.addAttribute("posts", boardService.findAllDesc());
-
+    public String index(Model model, @RequestParam(value = "keyword", required = false) String keyword){
+        if (keyword != null){
+            model.addAttribute("posts", boardService.search(keyword));
+        } else {
+            model.addAttribute("posts", boardService.findAllDesc());
+        }
         return "index";
     }
     
@@ -63,4 +64,5 @@ public class IndexController {
     public String login() {
         return "login"; // templates/login.html을 반환
     }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.board.pr.domain.user.User;
 import com.board.pr.domain.user.UserRepository;
 import com.board.pr.web.dto.UserListResponseDto;
 import com.board.pr.web.dto.UserSaveRequestDto;
@@ -28,6 +29,14 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
 
         return userRepository.save(requestDto.toEntity(encodedPassword)).getId();
+    }
+
+    @Transactional
+    public void delete(Long id){
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다. id = " + id));
+        
+        userRepository.delete(user);
     }
 
     @Transactional(readOnly = true)

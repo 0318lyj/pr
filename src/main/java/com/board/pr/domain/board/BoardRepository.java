@@ -17,4 +17,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      */
     @Query("SELECT b FROM Board b ORDER BY b.id DESC")
     List<Board> findAllDesc();
+
+    //제목 또는 내용에 키워드가 포함된 글을 최신순으로 조회
+    List<Board> findByTitleContainingOrContentContainingOrderByIdDesc(String title, String content);
 }
